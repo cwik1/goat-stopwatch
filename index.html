@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stopwatch</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 100px; }
+    #timer { font-size: 3em; margin-bottom: 20px; letter-spacing: 2px; }
+    button { font-size: 1.2em; margin: 0 10px; padding: 10px 20px; }
+    #goat-img { margin-top: 30px; width: 350px; height: auto; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
+  </style>
+</head>
+<body>
+  <div id="timer">0.000</div>
+  <button id="start">Start</button>
+  <button id="stop">Stop</button>
+  <button id="reset">Reset</button>
+  <br>
+  <img id="goat-img" src="" alt="Goat Picture" />
+
+  <script>
+    // Stopwatch logic
+    let startTime = 0;
+    let elapsed = 0;
+    let running = false;
+    let rafId = null;
+    function formatTime(ms) {
+      let seconds = ms / 1000;
+      return seconds.toFixed(3);
+    }
+    function updateDisplay(time) {
+      document.getElementById('timer').textContent = formatTime(time);
+    }
+    function animate() {
+      if (running) {
+        elapsed = performance.now() - startTime;
+        updateDisplay(elapsed);
+        rafId = requestAnimationFrame(animate);
+      }
+    }
+    function startTimer() {
+      if (!running) {
+        running = true;
+        startTime = performance.now() - elapsed;
+        rafId = requestAnimationFrame(animate);
+      }
+    }
+    function stopTimer() {
+      if (running) {
+        running = false;
+        cancelAnimationFrame(rafId);
+        updateDisplay(elapsed);
+      }
+    }
+    function resetTimer() {
+      stopTimer();
+      elapsed = 0;
+      updateDisplay(elapsed);
+    }
+    document.getElementById('start').addEventListener('click', startTimer);
+    document.getElementById('stop').addEventListener('click', stopTimer);
+    document.getElementById('reset').addEventListener('click', resetTimer);
+    updateDisplay(0);
+
+    // Goat images logic (Unsplash - open license)
+    const goatImages = [
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1518717758536-85ae29035b6d?auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=600&q=80"
+    ];
+    let currentGoat = 0;
+    const goatImg = document.getElementById('goat-img');
+    function showGoat(index) {
+      goatImg.src = goatImages[index];
+    }
+    showGoat(currentGoat);
+
+    setInterval(() => {
+      currentGoat = (currentGoat + 1) % goatImages.length;
+      showGoat(currentGoat);
+    }, 1000); // change every 1 second
+  </script>
+</body>
+</html>
